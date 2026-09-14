@@ -38,6 +38,7 @@ harbor run -p tasks/<slug> --agent claude-code --model anthropic/claude-opus-5 \
 | Gemini 3.8 Flash | Antigravity CLI | `--agent antigravity-cli --model gemini-3.8-flash` | `high`（agy 上 Flash 最高） |
 | Cursor Grok | 「Grok 3.6 最高」 | Cursor **没有 Grok 3.6**。用 `cursor-grok-4.6-xhigh` | Extra High |
 | Deepseek 4.1 Flash | 加测 / 官方替换备用 | `--agent mini-swe-agent --model deepseek/deepseek-v4.1-flash` | **`max`**（最高思考） |
+| GPT-6 Astra | 加测 | `--agent codex --model openai/gpt-6-astra` | **`max`**（Harbor 最高） |
 
 ```bash
 # Gemini 3.8 Flash · Antigravity CLI（本机 agy 已列出 gemini-3.8-flash-high）
@@ -57,8 +58,13 @@ harbor run -p tasks/<slug> --agent cursor-cli --model cursor-grok-4.6-xhigh \
 # slug 若 404，对照 DeepSeek 控制台改 --model，强度仍用 max。
 harbor run -p tasks/<slug> --agent mini-swe-agent --model deepseek/deepseek-v4.1-flash \
   --env docker --yes -k 3 \
-  --ae DEEPSEEK_API_KEY="$DEEPSEEK_API_KEY" \
-  --ae MSWEA_API_KEY="$DEEPSEEK_API_KEY" \
+  --env-file "$HOME/.config/harbor/secrets.env" \
+  --ak reasoning_effort=max
+
+# GPT-6 Astra · 最高思考 max（加测，不替代官方 gpt-5.6-sol xhigh）
+harbor run -p tasks/<slug> --agent codex --model openai/gpt-6-astra \
+  --env docker --yes -k 3 \
+  --ae CODEX_FORCE_AUTH_JSON=1 \
   --ak reasoning_effort=max
 ```
 
@@ -78,7 +84,7 @@ harbor run -p tasks/<slug> --agent mini-swe-agent --model deepseek/deepseek-v4.1
 | Codex 订阅 | 已登录 ChatGPT |
 | Claude OAuth | 已登录 |
 | `GEMINI_API_KEY` | 已有 |
-| `DEEPSEEK_API_KEY` | 已有 |
+| `DEEPSEEK_API_KEY` | 已放到本机 `$HOME/.config/harbor/secrets.env`，**不要写进仓库**。新开终端会自动加载；临时也可 `set -a && source ~/.config/harbor/secrets.env && set +a` |
 | `CURSOR_API_KEY` | Harbor 的 `cursor-cli` 在 Docker 里需要；本机 `cursor-agent` 登录不等于容器里有 key |
 
 Cursor 加测前在本机导出 `CURSOR_API_KEY`。没有的话，Grok 加测先跳过，不影响交 Klavis。

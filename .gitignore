@@ -6,3 +6,7 @@ jobs/
 .test_output/
 .test_logs/
 .DS_Store
+.env
+.env.*
+secrets.env
+*.pem
